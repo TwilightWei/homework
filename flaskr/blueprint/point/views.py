@@ -1,6 +1,6 @@
 from flask import Blueprint, current_app, request, make_response
 from datetime import datetime
-from validator import validate_json, validate_schema
+from validators import validate_json, validate_schema
 import blueprint.point.schemas as schema
 import db
 
