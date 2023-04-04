@@ -1,11 +1,14 @@
 import pymysql
+import logging
+
 
 def query(conn, qry: str):
     with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-        print(qry) 
+        logging.info(qry)
         cursor.execute(qry)
         rows = cursor.fetchall()
         return rows
+
 
 def update(conn, table: str, columns: list, values: list, where_str: str):
     set_str = ', '.join([f'{c} = {v}' for c, v in zip(columns, values)])
@@ -15,10 +18,11 @@ def update(conn, table: str, columns: list, values: list, where_str: str):
             SET {set_str}
             WHERE {where_str}
         '''
-        print(qry) 
+        logging.info(qry)
         cursor.execute(qry)
         conn.commit()
         return cursor.rowcount
+
 
 def insert(conn, table: str, columns: list, values: list):
     with conn.cursor() as cursor:
@@ -28,6 +32,6 @@ def insert(conn, table: str, columns: list, values: list):
             INSERT INTO {table} ({col_str})
             VALUES ({val_str})
         '''
-        print(qry) 
+        logging.info(qry)
         cursor.execute(qry)
         conn.commit()

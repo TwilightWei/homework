@@ -1,9 +1,8 @@
 from flask import Blueprint, current_app, request, make_response
 from datetime import datetime
 from validator import validate_json, validate_schema
-import point.schema as schema
+import blueprint.point.schemas as schema
 import db
-
 
 point = Blueprint('point', __name__)
 
@@ -16,7 +15,7 @@ def add(customer_id):
     amount = payload['amount']
     if amount <= 0:
         return make_response({'message': 'Failed'}, 400)
-    
+
     # Add points
     conn = current_app.config.get('MYSQL_DB')
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -26,7 +25,7 @@ def add(customer_id):
     rowcount = db.update(conn=conn, table='point', columns=update_columns, values=update_values, where_str=where_str)
     if rowcount == 0:
         return make_response({'message': 'Failed'}, 400)
-    
+
     # Record Log
     log_columns = ['customer_id', 'amount', 'action', 'created_at']
     log_values = [str(customer_id), str(amount), '"ADD"', f'"{now}"']

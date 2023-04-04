@@ -1,16 +1,19 @@
 from flaskext.mysql import MySQL
 from flask import Flask
-from point.blueprint import point
+from blueprint.point.views import point
 
 import json
-  
-# import credential
-f = open('.credential')
-credential = json.load(f)
-f.close()
+import logging
 
-# create and configure the app
-app = Flask(__name__) 
+# Create and configure the app
+app = Flask(__name__)
+
+# Config logger
+logging.basicConfig(level = logging.INFO)
+
+# Import credential
+with open('.credential') as f:
+    credential = json.load(f)
 
 # Initial db
 mysql_db = MySQL()
