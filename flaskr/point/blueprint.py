@@ -1,25 +1,18 @@
 from flask import Blueprint, current_app, request, make_response
 from datetime import datetime
-from jsonschema import validate
+from validator import validate_json, validate_schema
+import point.schema as schema
 import db
+
 
 point = Blueprint('point', __name__)
 
+
 @point.route('/add', methods=['POST'])
+@validate_json
+@validate_schema(schema.add_schema)
 def add(customer_id):
-    # Validate payload
     payload = request.json
-    schema = {
-        "type" : "object",
-        "properties" : {
-            "amount" : {"type" : "number"}
-        }
-    }
-    try:
-        validate(instance=payload, schema=schema)
-    except:
-        return make_response({'message': 'Failed'}, 400)
-    
     amount = payload['amount']
     if amount <= 0:
         return make_response({'message': 'Failed'}, 400)
@@ -40,29 +33,13 @@ def add(customer_id):
     db.insert(conn=conn, table='point_change_history', columns=log_columns, values=log_values)
     return make_response({'message': 'success'}, 200)
 
+
 @point.route('/redeem', methods=['POST'])
+@validate_json
+@validate_schema(schema.redeem_schema)
 def redeem(customer_id):
-    payload = request.json
-
-    # Validate payload
-    schema = {
-        "type" : "object",
-        "properties" : {
-            "commodities" : {
-                "type": "array",
-                "items": {
-                    "commodity_id" : {"type" : "number"},
-                    "amount" : {"type" : "number"}
-                }
-            }
-        }
-    }
-    try:
-        validate(instance=payload, schema=schema)
-    except:
-        return make_response({'message': 'Failed'}, 400)
-
     # Calculate cost
+    payload = request.json
     commodities = payload['commodities']
     com_id_str = ', '.join([str(e['commodity_id']) for e in commodities])
     conn = current_app.config.get('MYSQL_DB')
