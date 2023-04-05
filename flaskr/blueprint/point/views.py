@@ -7,10 +7,11 @@ import db
 point = Blueprint('point', __name__)
 
 
-@point.route('/add', methods=['POST'])
+@point.route('/add', methods=['PUT'])
 @validate_json
 @validate_schema(schema.add_schema)
 def add(customer_id):
+    # Check added points
     payload = request.json
     amount = payload['amount']
     if amount <= 0:
@@ -33,7 +34,7 @@ def add(customer_id):
     return make_response({'message': 'success'}, 200)
 
 
-@point.route('/redeem', methods=['POST'])
+@point.route('/redeem', methods=['PUT'])
 @validate_json
 @validate_schema(schema.redeem_schema)
 def redeem(customer_id):
@@ -50,7 +51,10 @@ def redeem(customer_id):
     rows = db.query(conn=conn, qry=qry)
     hashmap = {r['id']: r['cost'] for r in rows}
     cost = 0
+    print(hashmap)
     for c in commodities:
+        if c['commodity_id'] not in hashmap:
+            return make_response({'message': 'Failed'}, 400)
         cost += hashmap[c['commodity_id']] * c['amount']
 
     # Redeem
