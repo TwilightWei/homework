@@ -24,14 +24,16 @@ def update(conn, table: str, columns: list, values: list, where_str: str):
         return cursor.rowcount
 
 
-def insert(conn, table: str, columns: list, values: list):
+def insert(conn, table: str, columns: list, values: list, ignore = False):
     with conn.cursor() as cursor:
         col_str = ', '.join(columns)
         val_str = ', '.join(values)
+        ignore = 'IGNORE' if ignore else ''
         qry = f'''
-            INSERT INTO {table} ({col_str})
+            INSERT {ignore} INTO {table} ({col_str})
             VALUES ({val_str})
         '''
         logging.info(qry)
         cursor.execute(qry)
         conn.commit()
+        return cursor.rowcount

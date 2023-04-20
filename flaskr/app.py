@@ -1,6 +1,7 @@
+from base64 import b64decode
 from flaskext.mysql import MySQL
 from flask import Flask
-from blueprint.point.views import point
+from blueprint.account.views import account
 
 import json
 import logging
@@ -15,6 +16,9 @@ logging.basicConfig(level = logging.INFO)
 with open('.credential') as f:
     credential = json.load(f)
 
+# Initial vars
+app.config['PASSWORD_SALT'] = b64decode(credential['password_salt'].encode('utf-8'))
+
 # Initial db
 mysql_db = MySQL()
 app.config['MYSQL_DATABASE_USER'] = credential['mysql']['user']
@@ -25,4 +29,4 @@ mysql_db.init_app(app)
 app.config['MYSQL_DB'] = mysql_db.connect()
 
 # register blueprints
-app.register_blueprint(point, url_prefix='/point/<customer_id>')
+app.register_blueprint(account, url_prefix='/account')
