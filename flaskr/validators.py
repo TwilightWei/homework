@@ -10,7 +10,10 @@ def validate_json(f):
         try:
             request.json
         except jsonschema.exceptions.ValidationError as error:
-            return make_response({'message': 'Incorrect input format.'}, 400)
+            return make_response({
+                'success': False,
+                'message': 'Incorrect input format.'
+            }, 400)
         return f(*args, **kw)
     return wrapper
 
@@ -22,7 +25,10 @@ def validate_schema(schema):
             try:
                 validate(request.json, schema)
             except jsonschema.exceptions.ValidationError as error:
-                return make_response({'message': 'Incorrect input format.'}, 400)
+                return make_response({
+                'success': False,
+                'message': 'Incorrect input format.'
+            }, 400)
             return f(*args, **kw)
         return wrapper
     return decorator

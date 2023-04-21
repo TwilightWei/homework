@@ -114,7 +114,7 @@ def verify():
         if rowcount == 0:
             return make_response({
                 'success': False,
-                'reason': 'DB fail.'
+                'reason': 'Update fail.'
             }, 400)
 
         return make_response({
