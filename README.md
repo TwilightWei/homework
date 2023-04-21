@@ -2,17 +2,15 @@
 - Docker
 
 # Deployment Process
-1.
-
-
 1. cd to project root directory.
-2. Build images "docker-compose -f docker-compose.yml up -d --build"
-3. Connect to mysql db with the following credential.
+2. Pull images "docker compose pull"
+3. Run db container "docker compose up -d db"
+4. Connect to mysql db with the following credential.
     - Host: localhost
     - Username: root
     - Password: root
     - Port: 8080
-4. Initialize the database with the following scripts.
+5. Initialize the database with the following scripts.
     ```
     CREATE DATABASE homework;
     USE homework;
@@ -28,7 +26,7 @@
         `created_at` DATETIME NOT NULL
     );
     ```
-5. Restart flask container "docker-compose -f docker-compose.yml up -d flask"
+6. Run flask and nginx container "docker compose up -d flask nginx"
 
 # APIs
 - Create account
